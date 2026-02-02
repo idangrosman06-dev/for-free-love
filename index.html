@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>שאלה קטנה 💘</title>
+
+  <!-- Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root{
+      --bg1:#ffd6e7;
+      --bg2:#ffeef6;
+      --card:#ffffffcc;
+      --yes:#ff3b7a;
+      --yesH:#ff1f68;
+      --txt:#111827;
+      --muted:#6b7280;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      min-height:100svh;
+      display:grid;
+      place-items:center;
+      padding:16px;
+      background: radial-gradient(circle at top, var(--bg2), var(--bg1));
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      overflow:hidden;
+    }
+
+    #confettiCanvas{
+      position:fixed;
+      inset:0;
+      width:100vw;
+      height:100vh;
+      pointer-events:none;
+      z-index:9999;
+    }
+
+    .card{
+      width:min(720px, 94vw);
+      background:var(--card);
+      backdrop-filter: blur(10px);
+      border-radius:24px;
+      box-shadow:0 18px 60px rgba(0,0,0,.15);
+      padding:22px 18px 26px;
+      text-align:center;
+      z-index:1;
+    }
+
+    .bear{
+      width:min(260px, 80vw);
+      margin:0 auto 10px;
+      display:block;
+      filter: drop-shadow(0 10px 14px rgba(0,0,0,.12));
+      animation: float 2.5s ease-in-out infinite;
+    }
+
+    @keyframes float{
+      0%,100%{ transform: translateY(0); }
+      50%{ transform: translateY(-8px); }
+    }
+
+    h1{
+      font-size: clamp(24px, 4vw, 40px);
+      margin: 10px 0 14px;
+      color:var(--txt);
+    }
+
+    .zone{
+      position:relative;
+      width:min(520px, 92%);
+      height:140px;
+      margin:0 auto;
+      touch-action:none;
+    }
+
+    button{
+      position:absolute;
+      top:50%;
+      transform: translateY(-50%);
+      padding:14px 22px;
+      font-size:18px;
+      font-weight:900;
+      border-radius:999px;
+      border:none;
+      cursor:pointer;
+      box-shadow:0 10px 24px rgba(0,0,0,.14);
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      transition: transform .12s ease, background .12s ease;
+    }
+
+    #yes{
+      left:18%;
+      background:var(--yes);
+      color:#fff;
+    }
+    #yes:hover{ background:var(--yesH); }
+
+    #no{
+      left:62%;
+      background:#e5e7eb;
+      color:#111827;
+    }
+
+    .hint{
+      margin-top:8px;
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    .result{
+      display:none;
+      margin-top:18px;
+      animation: pop .35s ease;
+    }
+
+    @keyframes pop{
+      from{ transform:scale(.95); opacity:0;}
+      to{ transform:scale(1); opacity:1;}
+    }
+
+    .kitty{
+      width:min(320px, 90vw);
+      margin:0 auto 10px;
+      display:block;
+      filter: drop-shadow(0 10px 14px rgba(0,0,0,.12));
+    }
+
+    .final{
+      font-size: clamp(22px, 4vw, 36px);
+      margin: 8px 0;
+      color:#ff1f68;
+      font-weight:900;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="confettiCanvas"></canvas>
+
+  <main class="card">
+
+    <!-- Winnie the Pooh image -->
+    <img
+      class="bear"
+      src="https://upload.wikimedia.org/wikipedia/en/1/1c/Winnie-the-Pooh_%28Disney%29.svg"
+      alt="Winnie the Pooh"
+    />
+
+    <h1>אם את אוהבת אותו… תלחצי עליי 💘</h1>
+
+    <section class="zone" id="zone">
+      <button id="yes">כן 💖</button>
+      <button id="no">לא</button>
+    </section>
+
+    <div class="hint">רמז קטן: ה“לא” קצת ביישן 😈</div>
+
+    <section class="result" id="result">
+      <img
+        class="kitty"
+        src="https://upload.wikimedia.org/wikipedia/en/0/05/Hello_Kitty_character_portrait.png"
+        alt="Hello Kitty"
+      />
+      <div class="final">ידעתי שתלחצי 😏💎</div>
+      <p>השיר נפתח ביוטיוב…</p>
+    </section>
+  </main>
+
+  <script>
+    const zone = document.getElementById("zone");
+    const yesBtn = document.getElementById("yes");
+    const noBtn = document.getElementById("no");
+    const result = document.getElementById("result");
+    const canvas = document.getElementById("confettiCanvas");
+
+    function resizeCanvas(){
+      const dpr = Math.max(1, window.devicePixelRatio || 1);
+      canvas.width = Math.floor(innerWidth * dpr);
+      canvas.height = Math.floor(innerHeight * dpr);
+      canvas.style.width = "100vw";
+      canvas.style.height = "100vh";
+    }
+
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    const confettiInstance = confetti.create(canvas, {
+      resize:false,
+      useWorker:true
+    });
+
+    function launchConfetti(){
+      const end = Date.now() + 1500;
+      (function frame(){
+        confettiInstance({
+          particleCount: 12,
+          spread: 100,
+          startVelocity: 45,
+          ticks: 180,
+          origin: { x: Math.random(), y: Math.random() * 0.4 }
+        });
+        if(Date.now() < end) requestAnimationFrame(frame);
+      })();
+    }
+
+    function clamp(n, min, max){
+      return Math.max(min, Math.min(max, n));
+    }
+
+    function moveNo(px, py){
+      const z = zone.getBoundingClientRect();
+      const b = noBtn.getBoundingClientRect();
+
+      let dx = (b.left + b.width/2) - px;
+      let dy = (b.top + b.height/2) - py;
+      let mag = Math.hypot(dx, dy) || 1;
+      dx /= mag;
+      dy /= mag;
+
+      let newLeft = (b.left - z.left) + dx * 140;
+      let newTop  = (b.top - z.top) + dy * 140;
+
+      newLeft = clamp(newLeft, 0, z.width - b.width);
+      newTop  = clamp(newTop, 0, z.height - b.height);
+
+      noBtn.style.left = newLeft + "px";
+      noBtn.style.top = newTop + "px";
+      noBtn.style.transform = "none";
+    }
+
+    zone.addEventListener("pointermove", e => {
+      const b = noBtn.getBoundingClientRect();
+      const d = Math.hypot(
+        (b.left + b.width/2) - e.clientX,
+        (b.top + b.height/2) - e.clientY
+      );
+      if(d < 130) moveNo(e.clientX, e.clientY);
+    });
+
+    noBtn.addEventListener("click", e => e.preventDefault());
+
+    yesBtn.addEventListener("click", () => {
+      zone.style.display = "none";
+      result.style.display = "block";
+      resizeCanvas();
+      launchConfetti();
+
+      // Open Diamonds by Rihanna on YouTube
+      setTimeout(() => {
+        window.open("https://www.youtube.com/watch?v=lWA2pjMjpBs", "_blank");
+      }, 800);
+    });
+  </script>
+</body>
+</html>
